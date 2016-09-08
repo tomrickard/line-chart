@@ -29,14 +29,22 @@
 			// How to use lineChart
 			var linechart = lineChart.chart(selection, 'my-chart')
 				.ratio(4,2)
-				.addSeries(data1)
-				.addSeries(data2)
+				.data([data1])
 				.xLabel('Time (s)')
 				.yLabel('Temperature (degrees C)')
 				.title('Temperature vs Time')
 				.grid(true)
 				.render()
+
+			// data1.pop()
+			data1[3]={x:3,y:7}
+			setTimeout(function() {
+				linechart.data([data1]).update()
+			}, 1000);
+			
+			
 			})
+
 	</script>
 </head>
 <body>

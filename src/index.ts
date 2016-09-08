@@ -6,6 +6,7 @@ export interface Chart {
 	height?: Function;
 	margins?: Function;
 	addSeries?: Function;
+  data?: Function;
 	selection?: Function;
 	title?: Function;
 	xLabel?: Function;
@@ -103,6 +104,9 @@ function chart(selection, name = 'chart-container') {
     var grid_h = grid_svg.selectAll("line.h-grid")
       .data(scaleY.ticks(10))
       
+    grid_h.exit()
+      .remove()
+
     grid_h.enter()
       .append("line")
         .attr("class", "h-grid")
@@ -121,6 +125,9 @@ function chart(selection, name = 'chart-container') {
           
     var grid_v = grid_svg.selectAll("line.v-grid")
       .data(scaleX.ticks())
+
+    grid_v.exit()
+      .remove()
 
     grid_v.enter()
       .append("line")
@@ -153,6 +160,11 @@ function chart(selection, name = 'chart-container') {
     var chart_lines = chart_area.selectAll("path.line")
       .data(data)
 
+    // console.log(chart_lines)
+
+    chart_lines.exit()
+      .remove()
+
     chart_lines.enter()
       .append("path")
         .attr("class", "line")
@@ -169,6 +181,12 @@ function chart(selection, name = 'chart-container') {
     // Render data points using flattened array
     var chart_points = chart_area.selectAll(".datum")
       .data(all_data)
+
+    // console.log(chart_points)
+    // console.log(all_data)
+
+    chart_points.exit()
+      .remove()
 
     chart_points.enter()
       .append("circle")
@@ -193,6 +211,14 @@ function chart(selection, name = 'chart-container') {
     svg.append("g")
       .attr("class", "y-axis")
       .attr("transform", "translate(" + margins.left + "," + margins.top + ")")
+      .call(d3.axisLeft(scaleY))
+  }
+
+  function updateAxes() {
+    svg.select('g.x_axis')
+      .call(d3.axisBottom(scaleX))
+
+    svg.select('g.y_axis')
       .call(d3.axisLeft(scaleY))
   }
 
@@ -267,6 +293,12 @@ function chart(selection, name = 'chart-container') {
     return _chart;
   }
 
+  _chart.data = function (_data): number[][] | Chart {
+    if(!arguments.length) return data;
+    data = _data;
+    return _chart;
+  }
+
   _chart.selection = function (sel): Element | Chart {
     if (!arguments.length) return selection;
     selection = sel;
@@ -313,7 +345,7 @@ function chart(selection, name = 'chart-container') {
 
 
   // Renders the chart to screen
-  _chart.render = function (): void {
+  _chart.render = function (): Chart {
     if (data.length) {
       scale();
       renderContainer();
@@ -324,16 +356,17 @@ function chart(selection, name = 'chart-container') {
       renderAxes();
       renderLabels();
     }
+    return _chart;
+  }
 
-  _chart.update = function (): void {
+  _chart.update = function (): Chart{
     if (data.length) {
       scale();
       renderLines();
       renderPoints();
-      renderAxes();
+      updateAxes();
     }
-  }
-
+    return _chart;
   }
 
   return _chart;

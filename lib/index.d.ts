@@ -4,6 +4,7 @@ export interface Chart {
     height?: Function;
     margins?: Function;
     addSeries?: Function;
+    data?: Function;
     selection?: Function;
     title?: Function;
     xLabel?: Function;

@@ -114,6 +114,8 @@ var lineChart =
 	            .attr("class", "grid");
 	        var grid_h = grid_svg.selectAll("line.h-grid")
 	            .data(scaleY.ticks(10));
+	        grid_h.exit()
+	            .remove();
 	        grid_h.enter()
 	            .append("line")
 	            .attr("class", "h-grid")
@@ -131,6 +133,8 @@ var lineChart =
 	        });
 	        var grid_v = grid_svg.selectAll("line.v-grid")
 	            .data(scaleX.ticks());
+	        grid_v.exit()
+	            .remove();
 	        grid_v.enter()
 	            .append("line")
 	            .attr("class", "v-grid")
@@ -159,6 +163,9 @@ var lineChart =
 	        // Add line for each data series
 	        var chart_lines = chart_area.selectAll("path.line")
 	            .data(data);
+	        // console.log(chart_lines)
+	        chart_lines.exit()
+	            .remove();
 	        chart_lines.enter()
 	            .append("path")
 	            .attr("class", "line")
@@ -174,6 +181,10 @@ var lineChart =
 	        // Render data points using flattened array
 	        var chart_points = chart_area.selectAll(".datum")
 	            .data(all_data);
+	        // console.log(chart_points)
+	        // console.log(all_data)
+	        chart_points.exit()
+	            .remove();
 	        chart_points.enter()
 	            .append("circle")
 	            .attr("class", ".datum")
@@ -195,6 +206,12 @@ var lineChart =
 	        svg.append("g")
 	            .attr("class", "y-axis")
 	            .attr("transform", "translate(" + margins.left + "," + margins.top + ")")
+	            .call(d3.axisLeft(scaleY));
+	    }
+	    function updateAxes() {
+	        svg.select('g.x_axis')
+	            .call(d3.axisBottom(scaleX));
+	        svg.select('g.y_axis')
 	            .call(d3.axisLeft(scaleY));
 	    }
 	    function renderLabels() {
@@ -263,6 +280,12 @@ var lineChart =
 	        data.push(s);
 	        return _chart;
 	    };
+	    _chart.data = function (_data) {
+	        if (!arguments.length)
+	            return data;
+	        data = _data;
+	        return _chart;
+	    };
 	    _chart.selection = function (sel) {
 	        if (!arguments.length)
 	            return selection;
@@ -316,14 +339,16 @@ var lineChart =
 	            renderAxes();
 	            renderLabels();
 	        }
-	        _chart.update = function () {
-	            if (data.length) {
-	                scale();
-	                renderLines();
-	                renderPoints();
-	                renderAxes();
-	            }
-	        };
+	        return _chart;
+	    };
+	    _chart.update = function () {
+	        if (data.length) {
+	            scale();
+	            renderLines();
+	            renderPoints();
+	            updateAxes();
+	        }
+	        return _chart;
 	    };
 	    return _chart;
 	}
