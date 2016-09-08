@@ -99,41 +99,44 @@ function chart(selection, name = 'chart-container') {
   function renderGrid() {
     grid_svg = svg.append("g")
       .attr("class", "grid")
-
-    grid_svg.selectAll("line.h-grid")
+      
+    var grid_h = grid_svg.selectAll("line.h-grid")
       .data(scaleY.ticks(10))
-      .enter()
-        .append("line")
-          .attr("class", "h-grid")
-          .attr("x1", margins.left)
-          .attr("x2", width - margins.right)
-          .attr("y1", function (d) {
-            return scaleY(d) + margins.top + 0.5;
-          })
-          .attr("y2", function (d) {
-            return scaleY(d) + margins.top + 0.5;
-          })
-          .attr("fill", "none")
-          // .attr("shape-rendering", "crispEdges")
-          .attr("stroke", "rgb(200,200,200)")
-          .attr("stroke-width", "1px")
-
-    grid_svg.selectAll("line.v-grid")
+      
+    grid_h.enter()
+      .append("line")
+        .attr("class", "h-grid")
+        .attr("fill", "none")
+        .attr("stroke", "rgb(200,200,200)")
+        .attr("stroke-width", "1px")
+      .merge(grid_h)
+        .attr("x1", margins.left)
+        .attr("x2", width - margins.right)
+        .attr("y1", function (d) {
+          return scaleY(d) + margins.top + 0.5;
+        })
+        .attr("y2", function (d) {
+          return scaleY(d) + margins.top + 0.5;
+        })
+          
+    var grid_v = grid_svg.selectAll("line.v-grid")
       .data(scaleX.ticks())
-      .enter()
-        .append("line")
-          .attr("class", "v-grid")
-          .attr("y1", margins.top)
-          .attr("y2", height - margins.bottom)
-          .attr("x1", function (d) {
-            return scaleX(d) + margins.left + 0.5;
-          })
-          .attr("x2", function (d) {
-            return scaleX(d) + margins.left + 0.5;
-          })
-          .attr("fill", "none")
-          .attr("stroke", "rgb(200,200,200)")
-          .attr("stroke-width", "1px")
+
+    grid_v.enter()
+      .append("line")
+        .attr("class", "v-grid")
+        .attr("fill", "none")
+        .attr("stroke", "rgb(200,200,200)")
+        .attr("stroke-width", "1px")
+      .merge(grid_v)
+        .attr("y1", margins.top)
+        .attr("y2", height - margins.bottom)
+        .attr("x1", function (d) {
+          return scaleX(d) + margins.left + 0.5;
+        })
+        .attr("x2", function (d) {
+          return scaleX(d) + margins.left + 0.5;
+        })
   }
 
   function renderLines() {
@@ -147,34 +150,38 @@ function chart(selection, name = 'chart-container') {
       });
 
     // Add line for each data series
-    chart_area.selectAll("path.line")
+    var chart_lines = chart_area.selectAll("path.line")
       .data(data)
-      .enter()
+
+    chart_lines.enter()
       .append("path")
-      .attr("class", "line")
-      .attr("d", line)
-      .attr("fill", "none")
-      .attr("stroke", function (d, i) {
-        return colours[i];
-      })
-      .attr("stroke-width", "2");
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke-width", "2")
+      .merge(chart_lines)
+        .attr("d", line)
+        .attr("stroke", function (d, i) {
+          return colours[i];
+        })
   }
 
   function renderPoints() {
     // Render data points using flattened array
-    chart_area.selectAll(".datum")
-    .data(all_data)
-    .enter()
+    var chart_points = chart_area.selectAll(".datum")
+      .data(all_data)
+
+    chart_points.enter()
       .append("circle")
         .attr("class", ".datum")
+        .attr("r", 3)
+        .attr("fill", "#000")
+      .merge(chart_points)
         .attr("cx", function (d, i) {
           return scaleX(d.x);
         })
         .attr("cy", function (d) {
           return scaleY(d.y);
         })
-        .attr("r", 3)
-        .attr("fill", "#000")
   }
 
   function renderAxes() {
