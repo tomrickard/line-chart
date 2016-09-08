@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 
-interface LineChart {
+export interface Chart {
+  ratio?: Function;
 	width?: Function;
 	height?: Function;
 	margins?: Function;
@@ -11,57 +12,31 @@ interface LineChart {
 	yLabel?: Function;
 	render?: Function;
 	update?: Function;
+  grid?: Function;
 }
 
-interface Label {
+export interface Label {
   text?: string;
   position?: Function;
 }
 
-var selection = d3.select("body")
-
-// Setting up data series
-var data1 = [3,4,5.5,4,8,3,4.5,5,7,2].map(function (y, i) {
-  return {x: i, y: y};
-});
-
-var data2 = [4,5,6.7,3,7,4,5.5,6,3,3].map(function (y, i) {
-  return {x: i, y: y};
-})
-
-var data3 = [3,3,6.5,2,8,3,3.5,6,7,3].map(function (y, i) {
-  return {x: i, y: y};
-});
-
-// How to use lineChart
-var linechart = lineChart(selection)
-  .addSeries(data1)
-  .addSeries(data2)
-  .xLabel('X-Axis', function (width, height, margins) {
-    return {x:50, y:(height-20)}
-  })
-  .yLabel('Y-Axis')
-  .title('Title')
-
-
-linechart.render()
-
-
 //- Implementation -------------------------------------------
 
-function lineChart(selection) {
+function chart(selection, name = 'chart-container') {
   // Private variables
   var selection = selection;
   var data = [];
   var all_data = [];
   var colours = d3.schemeCategory10;
+  var grid = false;
 
-  var svg, chart_area;
+  var svg, chart_area, grid_svg;
   var scaleX, scaleY, line;
 
-  var margins = { top: 40, right: 30, bottom: 50, left: 50 };
-  var width = 600;
-  var height = 400;
+  var margins = { top: 50, right: 30, bottom: 50, left: 60 };
+  var width = 800;
+  var height = 600;
+  var ratio = [4,3];
   var chart_width, chart_height;
 
   var title: Label = { text:"" };
@@ -71,7 +46,7 @@ function lineChart(selection) {
   // Generates the titles xy position
   title.position = function (width, height, margins) {
     var x_pos = (width)/2;
-    var y_pos = margins.top/1.4;
+    var y_pos = margins.top/1.6;
     return {x: x_pos, y: y_pos}
   }
 
@@ -104,18 +79,61 @@ function lineChart(selection) {
       .domain(d3.extent(all_data, function (d) { return d.x }));
   }
 
-  function renderBody() {
+  function renderContainer() {
     svg = selection.append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("class", "chart-container")
+      // .attr("width", width)
+      // .attr("height", height)
+      .attr("class", name)
       .attr("xmlns", "http://www.w3.org/2000/svg")
       .attr("viewBox", "0 0 " + (width) + " " + (height))
       .style("background", "#eee")
+      .style("font-family", "sans-serif")
+  }
 
+  function renderChartArea() {
     chart_area = svg.append("g")
       .attr("class", "chart")
       .attr("transform", "translate(" + margins.left  + "," + margins.top + ")")
+  }
+
+  function renderGrid() {
+    grid_svg = svg.append("g")
+      .attr("class", "grid")
+
+    grid_svg.selectAll("line.h-grid")
+      .data(scaleY.ticks(10))
+      .enter()
+        .append("line")
+          .attr("class", "h-grid")
+          .attr("x1", margins.left)
+          .attr("x2", width - margins.right)
+          .attr("y1", function (d) {
+            return scaleY(d) + margins.top + 0.5;
+          })
+          .attr("y2", function (d) {
+            return scaleY(d) + margins.top + 0.5;
+          })
+          .attr("fill", "none")
+          // .attr("shape-rendering", "crispEdges")
+          .attr("stroke", "rgb(200,200,200)")
+          .attr("stroke-width", "1px")
+
+    grid_svg.selectAll("line.v-grid")
+      .data(scaleX.ticks())
+      .enter()
+        .append("line")
+          .attr("class", "v-grid")
+          .attr("y1", margins.top)
+          .attr("y2", height - margins.bottom)
+          .attr("x1", function (d) {
+            return scaleX(d) + margins.left + 0.5;
+          })
+          .attr("x2", function (d) {
+            return scaleX(d) + margins.left + 0.5;
+          })
+          .attr("fill", "none")
+          .attr("stroke", "rgb(200,200,200)")
+          .attr("stroke-width", "1px")
   }
 
   function renderLines() {
@@ -176,6 +194,7 @@ function lineChart(selection) {
     if (x_label.text) {
       position = x_label.position(width, height, margins);
       svg.append("text")
+        .attr("font-size", 15)
         .attr("class", "x-label")
         .text(x_label.text)
         .attr("text-anchor", "middle")
@@ -185,6 +204,7 @@ function lineChart(selection) {
     if (y_label.text) {
       position = y_label.position(width, height, margins);
       svg.append("text")
+        .attr("font-size", 15)
         .attr("class", "y-label")
         .text(y_label.text)
         .attr("text-anchor", "middle")
@@ -194,6 +214,7 @@ function lineChart(selection) {
     if (title.text) {
       position = title.position(width, height, margins);
       svg.append("text")
+        .attr("font-size", 20)
         .attr("class", "title")
         .text(title.text)
         .attr("text-anchor", "middle")
@@ -202,90 +223,114 @@ function lineChart(selection) {
   }
 
   // Returned object containing public API 
-  var _lineChart: LineChart = {};
+  var _chart: Chart = {};
 
   // Getter/setter methods for configuring chart
-  _lineChart.width = function (w): number | LineChart {
+  _chart.width = function (w): number | Chart {
     if (!arguments.length) return width;
     width = w;
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.height = function (h): number | LineChart {
+  _chart.height = function (h): number | Chart {
     if (!arguments.length) return height;
     height = h;
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.margins = function (m): {} | LineChart {
+  _chart.ratio = function (w, h): number | Chart {
+    if (arguments.length < 2) return ratio;
+    height = (width * h)/w;
+    ratio = [w,h];
+    return _chart;
+  }
+
+  _chart.margins = function (m): {} | Chart {
     if (!arguments.length) return margins;
-    margins = m;
-    return _lineChart;
+    for (var property in m) {
+        if (m.hasOwnProperty(property)) {
+            margins[property] = m[property]; 
+        }
+    }
+    return _chart;
   }
 
-  _lineChart.addSeries = function (s): LineChart {
+  _chart.addSeries = function (s): Chart {
     data.push(s);
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.selection = function (sel): Element | LineChart {
+  _chart.selection = function (sel): Element | Chart {
     if (!arguments.length) return selection;
     selection = sel;
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.title = function (text, pos): string | LineChart {
+  _chart.title = function (text, pos): string | Chart {
     if (!arguments.length) return title;
     title.text = text;
 
     if(pos) {
       title.position = pos;
     }
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.xLabel = function (text, pos): string | LineChart {
+  _chart.xLabel = function (text, pos): string | Chart {
     if (!arguments.length) return x_label;
     x_label.text = text;
 
     if(pos) {
       x_label.position = pos;
     }
-    return _lineChart;
+    return _chart;
   }
 
-  _lineChart.yLabel = function (text, pos): string | LineChart {
+  _chart.yLabel = function (text, pos): string | Chart {
     if (!arguments.length) return y_label;
     y_label.text = text;
 
     if(pos) {
       y_label.position = pos;
     }
-    return _lineChart;
+    return _chart;
   }
 
+  _chart.grid = function (_grid): boolean | Chart {
+    if (!arguments.length) return grid;
+    grid = _grid;
+
+    return _chart;
+  }
+
+
+
   // Renders the chart to screen
-  _lineChart.render = function (): void {
+  _chart.render = function (): void {
     if (data.length) {
       scale();
-      renderBody();
-      renderPoints();
+      renderContainer();
+      if(grid) { renderGrid(); }
+      renderChartArea();
       renderLines();
+      renderPoints();
       renderAxes();
       renderLabels();
     }
 
-  _lineChart.update = function (): void {
+  _chart.update = function (): void {
     if (data.length) {
       scale();
-      renderPoints();
       renderLines();
+      renderPoints();
       renderAxes();
     }
   }
 
   }
 
-  return _lineChart;
+  return _chart;
 }
+
+export { chart }
 

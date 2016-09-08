@@ -1,96 +1,69 @@
-# Typescript Template
+# Line-Chart
 
-A Typescript template for creating NPM packages. Uses Webpack for generating generating bundles. The `.gitignore` and `.npmignore` files are setup appropriately. NPM will ignore all the TypeScript source files. There is a small type checking module included as a demonstration and to check all the npm scripts are working.
+A small and simple line charting module. Uses D3 under the hood. Written in Typscript.
+
+## Install
+
+```
+npm install @tomrickard/line-chart
+
+// or just grab it directly
+<script type="text/javascript" src="thomasrickard.uk/bundles/line-chart-v1.js"></script>
+```
+
+If using NPM:
+
+### Vanilla JS
+
+```
+<script type="text/javascript" src="node_modules/line-chart/dist/line-chart.js"></script>
+var lineChart = lineChart()
+lineChart.chart(dom_selection)
+...
+```
+
+### Node/CommonJS
+
+```
+var lineChart = require('line-chart')
+lineChart.chart(dom_selection)
+...
+```
+
+### Typescript
+
+Type definitions are included and should be found automatically by the typescript compiler
+
+```
+import * as lineChart from 'line-chart' 
+lineChart.chart(dom_selection)
+...
+
+// or
+import { chart } from 'line-chart'
+chart(dom_selection)
+...
+```
+
+## Quick Example
 
 ## Usage
 
-Get a copy from Github
+## Styling
 
-```
-git clone https://github.com/tomrickard/npm-typescript-template.git
-```
-
-Remove or rename the Git `remote` with:
-
-```
-// Remove
-git remote rm origin
-// Rename
-git remote rename origin old-origin
-```
-
-Rename the package.json name and version to you project name and version:
-
-```
-{
-  "name": "YOUR-PACKAGE-NAME",
-  "version": "1.0.0",
-  ....
-
-  "author": "YOUR-NAME",
-  ...
-
-  }
-}
-```
-
-Add your git repo `remote`
-```
-// Github example
-git remote add https://github.com/<USER>/<REPO-NAME>.git
-
-// Bitbucket example
-git remote add https://<USER>@bitbucket.org/<USER>/<REPO-NAME>.git
-```
-
-Write some code!
+The chart will automatically expand to fill the container it is placed in. The ratio setter/getter controls the aspect ratio of the chart. The default is 4:3. 
 
 ## NPM scripts
 
-```
-npm run test       // starts Mocha up, runs tests in the /test/ folder. Uses mocha.opts
-npm run typings    // runs local version of Typings (i.e. do npm run typings install someModule)
-npm run tsc        // runs TypeScript compiler (uses tsconfig.json as config file)
-npm run tsc-w      // runs TypeScript compiler in watch mode
-npm run webpack    // runs Webpack
-npm run stylus     // runs Stylus compiler (looks in stylus folder)
-npm run stylus-w   // runs Stylus compiler in watch mode
-npm run webpack    // runs webpack (uses webpack.config.js as config file)
-npm run build      // => npm run stylus && npm run tsc && npm run webpack
-```
-
 ## Importing other NPM modules
 
-First install the module:
+
+## Modifying
 
 ```
-npm install --save someModule
+git clone 
 ```
 
-If the module is written in TypeScript the type definition file/s should automatically be loaded when you import the module. If the module was written in JavaScript you will need to grab the type definitions using typings. Simply run:
-
-```
-npm run typings install --save someModule
-``` 
-
-If running typings for the first time, make sure you tell the TypeScript compiler about the typings. Open `tsconfig.json` and add `"./typings/index.d.ts"` under the files section if it isn't already there.
-
-```
-{
-    "compilerOptions": {
-        "module": "commonjs",
-        "declaration": true,
-        "outDir": "lib/"
-    },
-    "files": [
-        "./src/index.ts",
-    ]
-}
-```
-
-## Stylus
-
-Stylus is included as a personal preference. It makes it easy to generate CSS for packages designed to run in the browser. Feel free to delete it. It outputs to `dist/css`.
 
 # License
 

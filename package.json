@@ -1,5 +1,5 @@
 {
-  "name": "npm-typescript-package",
+  "name": "line-chart",
   "version": "1.0.0",
   "description": "",
   "main": "./lib/index.js",
