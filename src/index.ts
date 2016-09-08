@@ -13,6 +13,11 @@ interface LineChart {
 	update?: Function;
 }
 
+interface Label {
+  text?: string;
+  position?: Function;
+}
+
 var selection = d3.select("body")
 
 // Setting up data series
@@ -59,9 +64,9 @@ function lineChart(selection) {
   var height = 400;
   var chart_width, chart_height;
 
-  var title = { text:"" };
-  var x_label = { text:"" };
-  var y_label = { text:"" };
+  var title: Label = { text:"" };
+  var x_label: Label = { text:"" };
+  var y_label: Label = { text:"" };
 
   // Generates the titles xy position
   title.position = function (width, height, margins) {
@@ -229,7 +234,7 @@ function lineChart(selection) {
     return _lineChart;
   }
 
-  _lineChart.title = function (text, pos) {
+  _lineChart.title = function (text, pos): string | LineChart {
     if (!arguments.length) return title;
     title.text = text;
 
@@ -239,7 +244,7 @@ function lineChart(selection) {
     return _lineChart;
   }
 
-  _lineChart.xLabel = function (text, pos) {
+  _lineChart.xLabel = function (text, pos): string | LineChart {
     if (!arguments.length) return x_label;
     x_label.text = text;
 
@@ -249,7 +254,7 @@ function lineChart(selection) {
     return _lineChart;
   }
 
-  _lineChart.yLabel = function (text, pos) {
+  _lineChart.yLabel = function (text, pos): string | LineChart {
     if (!arguments.length) return y_label;
     y_label.text = text;
 
@@ -260,7 +265,7 @@ function lineChart(selection) {
   }
 
   // Renders the chart to screen
-  _lineChart.render = function () {
+  _lineChart.render = function (): void {
     if (data.length) {
       scale();
       renderBody();
@@ -270,7 +275,7 @@ function lineChart(selection) {
       renderLabels();
     }
 
-  _lineChart.update = function () {
+  _lineChart.update = function (): void {
     if (data.length) {
       scale();
       renderPoints();
