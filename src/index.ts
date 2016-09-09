@@ -44,6 +44,8 @@ function chart(selection, name = 'chart-container') {
   var x_label: Label = { text:"" };
   var y_label: Label = { text:"" };
 
+  var parseTime = d3.timeParse("%d-%b-%y");
+
   // Generates the titles xy position
   title.position = function (width, height, margins) {
     var x_pos = (width)/2;
@@ -124,7 +126,7 @@ function chart(selection, name = 'chart-container') {
         })
           
     var grid_v = grid_svg.selectAll("line.v-grid")
-      .data(scaleX.ticks())
+      .data(scaleX.ticks(10))
 
     grid_v.exit()
       .remove()
@@ -179,15 +181,20 @@ function chart(selection, name = 'chart-container') {
 
   function renderPoints() {
     // Render data points using flattened array
-    var chart_points = chart_area.selectAll(".datum")
-      .data(all_data)
+    // Update
+    var chart_points = chart_area.selectAll("circle.datum")
+      .data(all_data, function (d, i) {
+        return i;
+      })
 
-    // console.log(chart_points)
-    // console.log(all_data)
+    console.log(chart_points)
+    console.log(all_data)
 
+    // Remove
     chart_points.exit()
       .remove()
 
+    // Enter + Update
     chart_points.enter()
       .append("circle")
         .attr("class", ".datum")
@@ -215,10 +222,10 @@ function chart(selection, name = 'chart-container') {
   }
 
   function updateAxes() {
-    svg.select('g.x_axis')
+    svg.select('g.x-axis')
       .call(d3.axisBottom(scaleX))
 
-    svg.select('g.y_axis')
+    svg.select('g.y-axis')
       .call(d3.axisLeft(scaleY))
   }
 
@@ -362,6 +369,7 @@ function chart(selection, name = 'chart-container') {
   _chart.update = function (): Chart{
     if (data.length) {
       scale();
+      // if(grid) { renderGrid(); }
       renderLines();
       renderPoints();
       updateAxes();

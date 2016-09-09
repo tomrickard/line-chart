@@ -45,7 +45,6 @@ var lineChart =
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
 	var d3 = __webpack_require__(1);
 	//- Implementation -------------------------------------------
 	function chart(selection, name) {
@@ -66,6 +65,7 @@ var lineChart =
 	    var title = { text: "" };
 	    var x_label = { text: "" };
 	    var y_label = { text: "" };
+	    var parseTime = d3.timeParse("%d-%b-%y");
 	    // Generates the titles xy position
 	    title.position = function (width, height, margins) {
 	        var x_pos = (width) / 2;
@@ -132,7 +132,7 @@ var lineChart =
 	            return scaleY(d) + margins.top + 0.5;
 	        });
 	        var grid_v = grid_svg.selectAll("line.v-grid")
-	            .data(scaleX.ticks());
+	            .data(scaleX.ticks(10));
 	        grid_v.exit()
 	            .remove();
 	        grid_v.enter()
@@ -179,12 +179,17 @@ var lineChart =
 	    }
 	    function renderPoints() {
 	        // Render data points using flattened array
-	        var chart_points = chart_area.selectAll(".datum")
-	            .data(all_data);
-	        // console.log(chart_points)
-	        // console.log(all_data)
+	        // Update
+	        var chart_points = chart_area.selectAll("circle.datum")
+	            .data(all_data, function (d, i) {
+	            return i;
+	        });
+	        console.log(chart_points);
+	        console.log(all_data);
+	        // Remove
 	        chart_points.exit()
 	            .remove();
+	        // Enter + Update
 	        chart_points.enter()
 	            .append("circle")
 	            .attr("class", ".datum")
@@ -209,9 +214,9 @@ var lineChart =
 	            .call(d3.axisLeft(scaleY));
 	    }
 	    function updateAxes() {
-	        svg.select('g.x_axis')
+	        svg.select('g.x-axis')
 	            .call(d3.axisBottom(scaleX));
-	        svg.select('g.y_axis')
+	        svg.select('g.y-axis')
 	            .call(d3.axisLeft(scaleY));
 	    }
 	    function renderLabels() {
@@ -344,6 +349,7 @@ var lineChart =
 	    _chart.update = function () {
 	        if (data.length) {
 	            scale();
+	            // if(grid) { renderGrid(); }
 	            renderLines();
 	            renderPoints();
 	            updateAxes();
