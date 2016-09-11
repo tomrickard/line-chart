@@ -94,7 +94,7 @@ var lineChart =
 	            all_data = all_data.concat(series);
 	        });
 	        if (scale_x_type === 'linear') {
-	            var min_max = d3.extent(all_data, function (d) { return d.y; });
+	            var min_max = d3.extent(all_data, function (d) { return d.x; });
 	            min_max[0] -= axis_buffer.y;
 	            min_max[1] += axis_buffer.y;
 	            scaleX = d3.scaleLinear()
@@ -186,7 +186,6 @@ var lineChart =
 	        // Add line for each data series
 	        var chart_lines = chart_area.selectAll("path.line")
 	            .data(data);
-	        // console.log(chart_lines)
 	        chart_lines.exit()
 	            .remove();
 	        chart_lines.enter()
@@ -203,19 +202,17 @@ var lineChart =
 	    function renderPoints() {
 	        // Render data points using flattened array
 	        // Update
-	        var chart_points = chart_area.selectAll("circle.datum")
+	        var chart_points = chart_area.selectAll("circle.point")
 	            .data(all_data, function (d, i) {
 	            return i;
 	        });
-	        console.log(chart_points);
-	        console.log(all_data);
 	        // Remove
 	        chart_points.exit()
 	            .remove();
 	        // Enter + Update
 	        chart_points.enter()
 	            .append("circle")
-	            .attr("class", ".datum")
+	            .attr("class", "point")
 	            .attr("r", 3)
 	            .attr("fill", "#000")
 	            .merge(chart_points)

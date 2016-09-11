@@ -80,7 +80,7 @@ function chart(selection, id = 'my-chart') {
     });
 
     if (scale_x_type === 'linear') {
-      var min_max = d3.extent(all_data, function (d) { return d.y });
+      var min_max = d3.extent(all_data, function (d) { return d.x });
       min_max[0] -= axis_buffer.y;
       min_max[1] += axis_buffer.y;
 
@@ -194,8 +194,6 @@ function chart(selection, id = 'my-chart') {
     var chart_lines = chart_area.selectAll("path.line")
       .data(data)
 
-    // console.log(chart_lines)
-
     chart_lines.exit()
       .remove()
 
@@ -214,13 +212,10 @@ function chart(selection, id = 'my-chart') {
   function renderPoints() {
     // Render data points using flattened array
     // Update
-    var chart_points = chart_area.selectAll("circle.datum")
+    var chart_points = chart_area.selectAll("circle.point")
       .data(all_data, function (d, i) {
         return i;
       })
-
-    console.log(chart_points)
-    console.log(all_data)
 
     // Remove
     chart_points.exit()
@@ -229,7 +224,7 @@ function chart(selection, id = 'my-chart') {
     // Enter + Update
     chart_points.enter()
       .append("circle")
-        .attr("class", ".datum")
+        .attr("class", "point")
         .attr("r", 3)
         .attr("fill", "#000")
       .merge(chart_points)
