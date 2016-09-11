@@ -5,6 +5,8 @@ export interface Chart {
 	width?: Function;
 	height?: Function;
 	margins?: Function;
+  scaleX?: Function;
+  scaleY?: Function
 	addSeries?: Function;
   data?: Function;
 	selection?: Function;
@@ -32,6 +34,8 @@ function chart(selection, id = 'my-chart') {
   var grid = false;
 
   var svg, chart_area, grid_svg;
+  var scale_x_type = 'linear';
+  var scale_y_type = 'linear';
   var scaleX, scaleY, line;
 
   var margins = { top: 50, right: 30, bottom: 50, left: 60 };
@@ -73,13 +77,32 @@ function chart(selection, id = 'my-chart') {
       all_data = all_data.concat(series);
     });
 
-    scaleY = d3.scaleLinear()
-      .range([height - margins.top - margins.bottom, 0])
-      .domain(d3.extent(all_data, function (d) { return d.y }));
-
-    scaleX = d3.scaleLinear()
+    if (scale_x_type === 'linear') {
+      scaleX = d3.scaleLinear()
       .range([0, width - margins.left - margins.right])
       .domain(d3.extent(all_data, function (d) { return d.x }));
+    } 
+
+    else if (scale_x_type === 'time') {
+      scaleX = d3.scaleTime()
+      .range([0, width - margins.left - margins.right])
+      .domain(d3.extent(all_data, function (d) { return d.x }));
+    }
+
+    if (scale_y_type === 'linear') {
+      scaleY = d3.scaleLinear()
+      .range([height - margins.top - margins.bottom, 0])
+      .domain(d3.extent(all_data, function (d) { return d.y }));
+    }
+
+    else if (scale_y_type === 'time') {
+      scaleY = d3.scaleTime()
+      .range([height - margins.top - margins.bottom, 0])
+      .domain(d3.extent(all_data, function (d) { return d.y }));
+    }
+    
+
+    
   }
 
   function renderContainer() {
@@ -293,6 +316,19 @@ function chart(selection, id = 'my-chart') {
     }
     return _chart;
   }
+
+  _chart.scaleX = function (_scale_x_type): string | Chart {
+    if(!arguments.length) return scale_x_type;
+    scale_x_type = _scale_x_type;
+    return _chart;
+  }
+
+  _chart.scaleY = function (_scale_y_type): string | Chart {
+    if(!arguments.length) return scale_y_type;
+    scale_y_type = _scale_y_type;
+    return _chart;
+  }
+
 
   _chart.addSeries = function (s): Chart {
     data.push(s);

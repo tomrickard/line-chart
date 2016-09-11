@@ -3,6 +3,8 @@ export interface Chart {
     width?: Function;
     height?: Function;
     margins?: Function;
+    scaleX?: Function;
+    scaleY?: Function;
     addSeries?: Function;
     data?: Function;
     selection?: Function;
