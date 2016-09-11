@@ -17,5 +17,5 @@ export interface Label {
     text?: string;
     position?: Function;
 }
-declare function chart(selection: any, name?: string): Chart;
+declare function chart(selection: any, id?: string): Chart;
 export { chart };

@@ -23,7 +23,7 @@ export interface Label {
 
 //- Implementation -------------------------------------------
 
-function chart(selection, name = 'chart-container') {
+function chart(selection, id = 'my-chart') {
   // Private variables
   var selection = selection;
   var data = [];
@@ -86,11 +86,10 @@ function chart(selection, name = 'chart-container') {
     svg = selection.append("svg")
       // .attr("width", width)
       // .attr("height", height)
-      .attr("class", name)
+      .attr("class", 'line-chart')
+      .attr("id", id)
       .attr("xmlns", "http://www.w3.org/2000/svg")
       .attr("viewBox", "0 0 " + (width) + " " + (height))
-      .style("background", "#eee")
-      .style("font-family", "sans-serif")
   }
 
   function renderChartArea() {

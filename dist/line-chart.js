@@ -48,8 +48,8 @@ var lineChart =
 	"use strict";
 	var d3 = __webpack_require__(1);
 	//- Implementation -------------------------------------------
-	function chart(selection, name) {
-	    if (name === void 0) { name = 'chart-container'; }
+	function chart(selection, id) {
+	    if (id === void 0) { id = 'my-chart'; }
 	    // Private variables
 	    var selection = selection;
 	    var data = [];
@@ -99,11 +99,10 @@ var lineChart =
 	    }
 	    function renderContainer() {
 	        svg = selection.append("svg")
-	            .attr("class", name)
+	            .attr("class", 'line-chart')
+	            .attr("id", id)
 	            .attr("xmlns", "http://www.w3.org/2000/svg")
-	            .attr("viewBox", "0 0 " + (width) + " " + (height))
-	            .style("background", "#eee")
-	            .style("font-family", "sans-serif");
+	            .attr("viewBox", "0 0 " + (width) + " " + (height));
 	    }
 	    function renderChartArea() {
 	        chart_area = svg.append("g")

@@ -1,0 +1,10 @@
+.line-chart {
+  background: #fff;
+  font-family: sans-serif;
+}
+.line-chart > g.grid > line.h-grid {
+  stroke: #c8c8c8;
+}
+.line-chart > g.grid > line.v-grid {
+  stroke: #c8c8c8;
+}
