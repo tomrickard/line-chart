@@ -2,3 +2,7 @@ node_modules
 src
 typings
 npm-debug.log
+webpack.config.js
+tsconfig.json
+.gitignore
+stylus
