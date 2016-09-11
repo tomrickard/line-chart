@@ -3,7 +3,7 @@
   font-family: sans-serif;
 }
 .line-chart > g.grid > line.h-grid {
-  stroke: #c8c8c8;
+  stroke: #969696;
 }
 .line-chart > g.grid > line.v-grid {
   stroke: #c8c8c8;

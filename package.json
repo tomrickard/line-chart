@@ -9,8 +9,8 @@
     "typings": "typings",
     "tsc": "tsc",
     "tsc-w": "tsc -w",
-    "stylus": "stylus ./stylus/app.styl -o ./dist/css/line-chart.css",
-    "stylus-w": "stylus ./stylus/app.styl -o ./dist/css/line-chart.css -w",
+    "stylus": "stylus ./stylus/default.styl -o ./dist/css/line-chart.css",
+    "stylus-w": "stylus ./stylus/default.styl -o ./dist/css/line-chart.css -w",
     "build": "npm run stylus && npm run tsc && npm run webpack",
     "webpack": "webpack"
   },

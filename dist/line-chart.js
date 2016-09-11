@@ -60,6 +60,7 @@ var lineChart =
 	    var scale_x_type = 'linear';
 	    var scale_y_type = 'linear';
 	    var scaleX, scaleY, line;
+	    var axis_buffer = { x: 0, y: 0 };
 	    var margins = { top: 50, right: 30, bottom: 50, left: 60 };
 	    var width = 800;
 	    var height = 600;
@@ -93,9 +94,12 @@ var lineChart =
 	            all_data = all_data.concat(series);
 	        });
 	        if (scale_x_type === 'linear') {
+	            var min_max = d3.extent(all_data, function (d) { return d.y; });
+	            min_max[0] -= axis_buffer.y;
+	            min_max[1] += axis_buffer.y;
 	            scaleX = d3.scaleLinear()
 	                .range([0, width - margins.left - margins.right])
-	                .domain(d3.extent(all_data, function (d) { return d.x; }));
+	                .domain(min_max);
 	        }
 	        else if (scale_x_type === 'time') {
 	            scaleX = d3.scaleTime()
@@ -103,9 +107,12 @@ var lineChart =
 	                .domain(d3.extent(all_data, function (d) { return d.x; }));
 	        }
 	        if (scale_y_type === 'linear') {
+	            var min_max = d3.extent(all_data, function (d) { return d.y; });
+	            min_max[0] -= axis_buffer.y;
+	            min_max[1] += axis_buffer.y;
 	            scaleY = d3.scaleLinear()
 	                .range([height - margins.top - margins.bottom, 0])
-	                .domain(d3.extent(all_data, function (d) { return d.y; }));
+	                .domain(min_max);
 	        }
 	        else if (scale_y_type === 'time') {
 	            scaleY = d3.scaleTime()
@@ -307,6 +314,16 @@ var lineChart =
 	        if (!arguments.length)
 	            return scale_y_type;
 	        scale_y_type = _scale_y_type;
+	        return _chart;
+	    };
+	    _chart.axisBuffer = function (_axis_buffer) {
+	        if (!arguments.length)
+	            return axis_buffer;
+	        for (var property in _axis_buffer) {
+	            if (_axis_buffer.hasOwnProperty(property)) {
+	                axis_buffer[property] = _axis_buffer[property];
+	            }
+	        }
 	        return _chart;
 	    };
 	    _chart.addSeries = function (s) {

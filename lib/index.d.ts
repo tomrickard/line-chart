@@ -5,6 +5,7 @@ export interface Chart {
     margins?: Function;
     scaleX?: Function;
     scaleY?: Function;
+    axisBuffer?: Function;
     addSeries?: Function;
     data?: Function;
     selection?: Function;

@@ -6,7 +6,8 @@ export interface Chart {
 	height?: Function;
 	margins?: Function;
   scaleX?: Function;
-  scaleY?: Function
+  scaleY?: Function;
+  axisBuffer?: Function;
 	addSeries?: Function;
   data?: Function;
 	selection?: Function;
@@ -37,6 +38,7 @@ function chart(selection, id = 'my-chart') {
   var scale_x_type = 'linear';
   var scale_y_type = 'linear';
   var scaleX, scaleY, line;
+  var axis_buffer = { x: 0, y: 0 };
 
   var margins = { top: 50, right: 30, bottom: 50, left: 60 };
   var width = 800;
@@ -78,9 +80,13 @@ function chart(selection, id = 'my-chart') {
     });
 
     if (scale_x_type === 'linear') {
+      var min_max = d3.extent(all_data, function (d) { return d.y });
+      min_max[0] -= axis_buffer.y;
+      min_max[1] += axis_buffer.y;
+
       scaleX = d3.scaleLinear()
       .range([0, width - margins.left - margins.right])
-      .domain(d3.extent(all_data, function (d) { return d.x }));
+      .domain(min_max);
     } 
 
     else if (scale_x_type === 'time') {
@@ -90,9 +96,13 @@ function chart(selection, id = 'my-chart') {
     }
 
     if (scale_y_type === 'linear') {
+      var min_max = d3.extent(all_data, function (d) { return d.y });
+      min_max[0] -= axis_buffer.y;
+      min_max[1] += axis_buffer.y;
+
       scaleY = d3.scaleLinear()
       .range([height - margins.top - margins.bottom, 0])
-      .domain(d3.extent(all_data, function (d) { return d.y }));
+      .domain(min_max);
     }
 
     else if (scale_y_type === 'time') {
@@ -329,6 +339,15 @@ function chart(selection, id = 'my-chart') {
     return _chart;
   }
 
+  _chart.axisBuffer = function (_axis_buffer): {} | Chart {
+    if (!arguments.length) return axis_buffer;
+    for (var property in _axis_buffer) {
+        if (_axis_buffer.hasOwnProperty(property)) {
+            axis_buffer[property] = _axis_buffer[property]; 
+        }
+    }
+    return _chart;
+  }
 
   _chart.addSeries = function (s): Chart {
     data.push(s);
