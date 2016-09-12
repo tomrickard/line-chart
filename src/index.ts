@@ -2,20 +2,20 @@ import * as d3 from 'd3';
 
 export interface Chart {
   ratio?: Function;
-	width?: Function;
-	height?: Function;
-	margins?: Function;
+  width?: Function;
+  height?: Function;
+  margins?: Function;
   scaleX?: Function;
   scaleY?: Function;
   axisPadding?: Function;
-	addSeries?: Function;
+  addSeries?: Function;
   data?: Function;
-	selection?: Function;
-	title?: Function;
-	xLabel?: Function;
-	yLabel?: Function;
-	render?: Function;
-	update?: Function;
+  selection?: Function;
+  title?: Function;
+  xLabel?: Function;
+  yLabel?: Function;
+  render?: Function;
+  update?: Function;
   grid?: Function;
 }
 
